@@ -35,7 +35,10 @@ function App(){
 
     return (
       <div className="shorten-main">
-        <h1 className="shorten-heading">URL Shortener</h1>
+        <div className="top-bar">
+                <h1 className="shorten-heading">URL Shortener</h1>
+                <button className="profile-icon">👤</button>
+            </div>
         <form onSubmit={handleSubmit} className="shorten-form">
           <input className="urlinput" placeholder="Enter the url" value={inputUrl} onChange={handleChange}></input>
           <button className="shorten-button" type="submit">Shorten</button>
