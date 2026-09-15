@@ -9,8 +9,8 @@ function SignIn(){
 
     const handleSubmit=(e)=>{
         e.preventDefault();
-        console.log("Email":{email});
-        console.log("Password":{password});
+        console.log("Email:",email);
+        console.log("Password:",password);
     };
 
     return (
