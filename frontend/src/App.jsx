@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import './all.css';
+import Navbar from './components/Navbar';
 
 function App(){
     const [inputUrl, setInputUrl] = useState("");
@@ -35,10 +36,7 @@ function App(){
 
     return (
       <div className="shorten-main">
-        <div className="top-bar">
-                <h1 className="shorten-heading">URL Shortener</h1>
-                <button className="profile-icon">👤</button>
-            </div>
+        <Navbar/>
         <form onSubmit={handleSubmit} className="shorten-form">
           <input className="urlinput" placeholder="Enter the url" value={inputUrl} onChange={handleChange}></input>
           <button className="shorten-button" type="submit">Shorten</button>

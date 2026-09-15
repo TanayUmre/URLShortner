@@ -1,3 +1,19 @@
+.navbar{
+  height: 70px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #F2EFE7;
+}
+
+.navbar-logo{
+  margin: 0;
+  color:#3368A0;
+  font-size: 30px;
+  font-weight: 700;
+}
+
 .shorten-main {
   min-height: 100vh;
   background-color: #F2EFE7;
@@ -15,20 +31,19 @@
 
 .profile-icon {
   position: absolute;
-  right: 30px;
-  top: 50%;
-  transform: translateY(-50%);
+  right:30px;
   width: 45px;
   height: 45px;
   border: none;
   border-radius: 50%;
   background-color: #C8DFDB;
   color: #3368A0;
-  font-size: 22px;
+  font-size: 21px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: 0.2s ease;
 }
 
 .profile-icon:hover {
