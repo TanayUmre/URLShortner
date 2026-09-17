@@ -22,16 +22,16 @@ function SignIn(){
                     <p className="auth-description">Sign in to manage your shortened URLs</p>
                     <form onSubmit={handleSubmit} className="auth-form">
                         <div className="form-group">
-                            <label htmlfor="email">Email</label>
+                            <label htmlFor="email">Email</label>
                             <input id="email" type="email" placeholder="Enter your email" value={email} onChange={(e)=>setEmail(e.target.value)} required/>
                         </div>
                         <div className="form-group">
-                            <label htmlfor="password">Password</label>
+                            <label htmlFor="password">Password</label>
                             <input id="password" type="password" placeholder="Enter your password" value={password} onChange={(e)=>setPassword(e.target.value)} required/>
                         </div>
                         <button type="submit" className="auth-button">Sign In</button>
                     </form>
-                    <Link className="forgot-password">Forgot Password?</Link>
+                    <p className="auth-footer">{' '}<Link>Forgot Password?</Link></p>
                     <p className="auth-footer">Don't have an account?{' '}<Link to="/signup">Sign Up</Link></p>
                 </div>
             </main>
