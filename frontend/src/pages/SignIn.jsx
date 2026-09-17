@@ -31,6 +31,7 @@ function SignIn(){
                         </div>
                         <button type="submit" className="auth-button">Sign In</button>
                     </form>
+                    <Link className="forgot-password">Forgot Password?</Link>
                     <p className="auth-footer">Don't have an account?{' '}<Link to="/signup">Sign Up</Link></p>
                 </div>
             </main>
