@@ -8,14 +8,16 @@ function SignUp(){
     const [useremail,setUseremail]=useState("");
     const [userpassword,setUserpassword]=useState("");
     const [confirmPassword,setConfirmPassword]=useState("");
+    const [passwordError,setPasswordError]=useState("");
 
     const handleSubmit=(e)=>{
         e.preventDefault();
 
         if(userpassword !== confirmPassword){
-            alert("Passwords Doesn't Match");
+            setPasswordError("Passwords Doesn't Match");
             return;
         }
+        setPasswordError("");
         console.log("Username:",username);
         console.log("UserEmail:",useremail);
         console.log("UserPassword:",userpassword);
@@ -48,6 +50,9 @@ function SignUp(){
                         <div className="form-group">
                             <label htmlFor="confirm-password">Confirm Password</label>
                             <input id="confirm-password" type="text" placeholder="Confirm your password" value={confirmPassword} onChange={(e)=>setConfirmPassword(e.target.value)} required></input>
+                            {passwordError && (
+                                <p className="password-error">{passwordError}</p>
+                            )}
                         </div>
                         <button type="submit" className="auth-button">Create Account</button>
                     </form>

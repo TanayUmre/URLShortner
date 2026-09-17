@@ -253,3 +253,10 @@
 .forgot-password:hover{
   color:#66A3BF;
 }
+
+.password-error{
+  margin: 1px 0 0;
+  color: #d93025;
+  font-size: 14px;
+  font-weight: 500;
+}
