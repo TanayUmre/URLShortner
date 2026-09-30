@@ -1,15 +1,12 @@
 import uvicorn
-import random
-import string
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel,HttpUrl
+from database import Base,engine
+from schemas import URLCreate,URLResponse
+from crud import add_url,add_user
+import models
 
-class RequestBody(BaseModel):
-    url: HttpUrl
-
-class ResponseBody(BaseModel):
-    url: HttpUrl
+Base.metadata.create_all(engine)
 
 app=FastAPI()
 
@@ -25,10 +22,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/shorten",response_model=ResponseBody)
-def shorten_url(request:RequestBody):
-    shortened_url="http://shrtned.com"
-    return ResponseBody(url=shortened_url)
+add_user(
+    "Test User",
+    "test@example.com",
+    "password123"
+)
+
+@app.post("/shorten",response_model=URLResponse)
+def shorten_url(request:URLCreate):
+    shortened_url=add_url(1,str(request.url))
+    return URLResponse(url=shortened_url)
 
 
 if __name__=="__main__":
