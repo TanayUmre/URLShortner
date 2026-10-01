@@ -7,9 +7,11 @@ function Home(){
     const [inputUrl, setInputUrl] = useState("");
     const [shortenedUrl, setShortenedUrl] = useState("Your shortened URL will appear here");
 
-        const handleChange = (e)=> {
+    const handleChange = (e)=> {
         setInputUrl(e.target.value);
     }
+
+    const token=localStorage.getItem("access_token");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -18,6 +20,7 @@ function Home(){
                 method:'POST',
                 headers:{
                     'Content-Type':'application/json',
+                    'Authorization':`Bearer ${token}`,
                 },
                 body:JSON.stringify({url:inputUrl}),
             });

@@ -24,6 +24,7 @@ function SignIn(){
             if(!resp.ok){
                 throw new Error(data.detail || "Login failed"); 
             }
+            localStorage.setItem("access_token",data.access_token);
             console.log(data.message)
         }
         catch(error){
