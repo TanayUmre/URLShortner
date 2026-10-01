@@ -10,7 +10,7 @@ function SignUp(){
     const [confirmPassword,setConfirmPassword]=useState("");
     const [passwordError,setPasswordError]=useState("");
 
-    const handleSubmit=(e)=>{
+    const handleSubmit= async (e)=>{
         e.preventDefault();
 
         if(userpassword !== confirmPassword){
@@ -18,9 +18,27 @@ function SignUp(){
             return;
         }
         setPasswordError("");
-        console.log("Username:",username);
-        console.log("UserEmail:",useremail);
-        console.log("UserPassword:",userpassword);
+        try{
+            const resp=await fetch("http://localhost:8000/signup",{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    name:username,
+                    email:useremail,
+                    password:userpassword
+                }),
+            });
+            const data=await resp.json();
+            if(!resp.ok){
+                throw new Error(data.message || "Failed to create account");
+            }
+            console.log(data.message);
+        }
+        catch(error){
+            console.error("Error:",error.message);
+        }
     };
 
     return (
