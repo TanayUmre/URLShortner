@@ -1,3 +1,5 @@
+import {Link} from "react-router-dom";
+
 function Navbar(){
     return (
         <nav className="navbar">
@@ -5,9 +7,9 @@ function Navbar(){
                 URL Shortner
             </div>
 
-            <button className="profile-icon">
+            <Link to="/profile" className="profile-icon">
                 👤
-            </button>
+            </Link>
         </nav>
     );
 }
