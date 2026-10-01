@@ -1,10 +1,17 @@
 import Navbar from "../components/Navbar";
 import "../all.css";
 import {useEffect,useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 function Profile() {
     const[user,setUser]=useState(null);
     const[error,setError]=useState("");
+    const navigate=useNavigate();
+    
+    const handleLogout=()=>{
+        localStorage.removeItem("access_token");
+        navigate("/signin");
+    }
 
     useEffect(()=>{
         const token=localStorage.getItem("access_token");
@@ -61,7 +68,7 @@ function Profile() {
                     <button className="profile-button">
                         Change Password
                     </button>
-                    <button className="logout-button">
+                    <button className="logout-button" onClick={handleLogout}>
                         Logout
                     </button>
                 </div>

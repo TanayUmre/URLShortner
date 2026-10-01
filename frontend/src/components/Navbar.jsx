@@ -9,7 +9,7 @@ function Navbar(){
             navigate("/profile");
         }
         else{
-            navigate("/login");
+            navigate("/SignIn");
         }
     }
 

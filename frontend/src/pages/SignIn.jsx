@@ -1,11 +1,13 @@
 import {useState} from 'react';
-import {Link} from 'react-router-dom';
+import {Link,useNavigate} from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import '../all.css';
 
 function SignIn(){
     const [email,setEmail]=useState("");
     const [password,setPassword]=useState("");
+
+    const navigate=useNavigate();
 
     const handleSubmit= async (e)=>{
         e.preventDefault();
@@ -25,6 +27,7 @@ function SignIn(){
                 throw new Error(data.detail || "Login failed"); 
             }
             localStorage.setItem("access_token",data.access_token);
+            navigate("/profile");
             console.log(data.message)
         }
         catch(error){
