@@ -67,7 +67,7 @@ function SignUp(){
                         </div>
                         <div className="form-group">
                             <label htmlFor="confirm-password">Confirm Password</label>
-                            <input id="confirm-password" type="text" placeholder="Confirm your password" value={confirmPassword} onChange={(e)=>{setConfirmPassword(e.target.value);setPasswordError("");}} required></input>
+                            <input id="confirm-password" type="password" placeholder="Confirm your password" value={confirmPassword} onChange={(e)=>{setConfirmPassword(e.target.value);setPasswordError("");}} required></input>
                             {passwordError && (
                                 <p className="password-error">{passwordError}</p>
                             )}
