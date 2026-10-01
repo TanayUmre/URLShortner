@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Link} from "react-router-dom";
+import {Link,useNavigate} from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "../all.css";
 
@@ -9,6 +9,8 @@ function SignUp(){
     const [userpassword,setUserpassword]=useState("");
     const [confirmPassword,setConfirmPassword]=useState("");
     const [passwordError,setPasswordError]=useState("");
+
+    const navigate=useNavigate();
 
     const handleSubmit= async (e)=>{
         e.preventDefault();
@@ -34,7 +36,22 @@ function SignUp(){
             if(!resp.ok){
                 throw new Error(data.message || "Failed to create account");
             }
-            console.log(data.message);
+            const loginResp=await fetch("http://localhost:8000/login",{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    email:useremail,
+                    password:userpassword
+                }),
+            });
+            const loginData=await loginResp.json();
+            if(!loginResp.ok){
+                throw new Error(loginData.detail || "Login failed after signup");
+            }
+            localStorage.setItem("access_token",loginData.access_token);
+            navigate("/profile");
         }
         catch(error){
             console.error("Error:",error.message);
