@@ -1,11 +1,11 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI,Depends
 from fastapi.middleware.cors import CORSMiddleware
 from database import Base,engine
 from schemas import URLCreate,URLResponse,UserCreate,UserLogin
 from crud import add_url,add_user,get_user
-from auth import create_access_token
-import models
+from auth import create_access_token,get_current_user
+from models import User
 
 Base.metadata.create_all(engine)
 
@@ -23,15 +23,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-add_user(
-    "Test User",
-    "test@example.com",
-    "password123"
-)
-
 @app.post("/shorten",response_model=URLResponse)
-def shorten_url(request:URLCreate):
-    shortened_url=add_url(1,str(request.url))
+def shorten_url(request:URLCreate,current_user:User=Depends(get_current_user)):
+    shortened_url=add_url(current_user.id,str(request.url))
     return URLResponse(url=shortened_url)
 
 @app.post("/signup")
@@ -46,6 +40,10 @@ def login_user(request:UserLogin):
         return {"message":"Invalid email or password"}
     tkn=create_access_token(user.id)
     return {"message":"Login successful","access_token":tkn}
+
+@app.get("/me")
+def get_me(current_user:User=Depends(get_current_user)):
+    return {"id":current_user.id,"name":current_user.name,"email":current_user.email}
 
 if __name__=="__main__":
     uvicorn.run(app,host="0.0.0.0",port=8000)
