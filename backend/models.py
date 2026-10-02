@@ -20,3 +20,4 @@ class URL(Base):
     user_id:Mapped[int]=mapped_column(ForeignKey("users.id"),nullable=False)
     created_at:Mapped[datetime]=mapped_column(DateTime,default=datetime.now)
     user:Mapped["User"]=relationship(back_populates="urls")
+    clicked_count:Mapped[int]=mapped_column(default=0,nullable=False)

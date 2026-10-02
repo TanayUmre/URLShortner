@@ -439,3 +439,25 @@
   background-color: #66A3BF;
   color: white;
 }
+
+.home-icon{
+  position: absolute;
+  left: 30px;
+  height: 45px;
+  width: 45px;
+  border: none;
+  border-radius: 50%;
+  background-color: #C8DFDB;
+  color: #3368A0;
+  font-size: 21px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s ease;
+}
+
+.home-icon:hover{
+  background-color: #66A3BF;
+  color: white;
+}

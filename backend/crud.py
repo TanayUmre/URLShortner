@@ -77,3 +77,12 @@ def delete_url(url_id:int,user_id:int):
         session.delete(url)
         session.commit()
         return True
+
+def get_url_by_short_code(short_code:str):
+    with Session() as session:
+        url=session.query(URL).filter_by(shortened_url=short_code).first()
+        if not url:
+            return None
+        url.clicked_count+=1
+        session.commit()
+        return url.url

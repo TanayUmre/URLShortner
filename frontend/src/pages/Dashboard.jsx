@@ -78,11 +78,17 @@ function Dashboard(){
                                     </div>
                                     <div className="url-info">
                                         <span>Short URL</span>
-                                        <p>{item.shortened_url}</p>
+                                        <a href={`http://localhost:8000/${item.shortened_url}`} target="_blank" rel="noopener noreferrer">
+                                            {item.shortened_url}
+                                        </a>
                                     </div>
                                     <div className="url-info">
                                         <span>Created At</span>
                                         <p>{new Date(item.created_at).toLocaleString()}</p>
+                                    </div>
+                                    <div className="url-info">
+                                        <span>Click Count</span>
+                                        <p>{item.clicked_count}</p>
                                     </div>
                                     <button className="delete-button" onClick={()=>handleDelete(item.id)}>Delete</button>
                                 </div>

@@ -19,6 +19,10 @@ class URLResponse(BaseModel):
     storened_url:str
     user_id:int
     created_at:datetime
+    clicked_count:int
     model_config={
         "from-attributes":True
     }
+
+class ShortenResponse(BaseModel):
+    url: str

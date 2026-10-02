@@ -15,6 +15,10 @@ function Navbar(){
 
     return (
         <nav className="navbar">
+            <button className="home-icon" onClick={() => navigate("/")}>
+                🏠
+            </button>
+
             <div className="navbar-logo">
                 URL Shortner
             </div>
