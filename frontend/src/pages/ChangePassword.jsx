@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useState,useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import Navbar from "../components/Navbar";
 import PasswordInput from "../components/PasswordInput";
@@ -12,22 +12,29 @@ function ChangePassword(){
     const {showToast}=useToast();
     const navigate=useNavigate();
     
+    useEffect(()=>{
+        const token=localStorage.getItem("access_token");
+        if(!token){
+            showToast("Please log in to change your password","error");
+            navigate("/signin");
+        }
+    },[navigate]);
+
     const handleSubmit=async (e)=>{
         e.preventDefault();
+        if(newPassword.length<8){
+            showToast("New password must be at least 8 characters long","error");
+            return;
+        }
         if(newPassword===currentPassword){
             showToast("New password must be different from your current password","error");
             return;
         }
         if(newPassword!==confirmPassword){
-            showToast("New passwords do not match","error");
+            showToast("New password and Confirm password does not match","error");
             return;
         };
         const token=localStorage.getItem("access_token");
-        if(!token){
-            showToast("Please log in to change your password","error");
-            navigate("/signin");
-            return;
-        }
         try{
             const resp=await fetch("http://localhost:8000/change-password",{
                 method:"POST",

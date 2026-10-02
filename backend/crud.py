@@ -29,6 +29,8 @@ def add_user(name:str,email:str,password:str):
         existing_name=session.query(User).filter(User.name==name).first()
         if existing_name:
             return False,"Username is already taken"
+        if len(password)<8:
+            return False,"Password must be atleast 8 characters long"
         
         hashedPw=passwordhash.hash(password)
         user=User(name=name,email=email,password_hash=hashedPw)
@@ -102,6 +104,8 @@ def change_password(user_id:int,current_password:str,new_password:str):
         user=session.get(User,user_id)
         if not user:
             return False,"User not found"
+        if len(new_password)<8:
+            return False,"New password must be at least 8 characters long"
         if not passwordhash.verify(current_password,user.password_hash):
             return False,"Incorrect current password"
         if passwordhash.verify(new_password,user.password_hash):

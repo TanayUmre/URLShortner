@@ -16,6 +16,10 @@ function SignUp(){
 
     const handleSubmit= async (e)=>{
         e.preventDefault();
+        if(userpassword.length<8){
+            showToast("Password must be at least 8 characters long","error");
+            return;
+        }
 
         if(userpassword !== confirmPassword){
             showToast("Passwords do not match","error");

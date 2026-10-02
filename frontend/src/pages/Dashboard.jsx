@@ -2,10 +2,12 @@ import Navbar from "../components/Navbar";
 import { useToast } from "../components/ToastContext";
 import "../all.css";
 import {useEffect,useState} from "react";
+import {useNavigate} from "react-router-dom"
 
 function Dashboard(){
     const [urls,setUrls]=useState([]);
     const {showToast}=useToast();
+    const navigate=useNavigate();
 
     const totalUrls=urls.length;
     const totalClicks=urls.reduce((total,url)=>total+url.clicked_count,0);
@@ -40,6 +42,7 @@ function Dashboard(){
         const token=localStorage.getItem("access_token");
         if(!token){
             showToast("You must be logged in to view the dashboard","error");
+            navigate("/signin");
             return;
         }
         const getUrls=async()=>{
@@ -64,7 +67,7 @@ function Dashboard(){
             }
         };
         getUrls();
-    },[]);
+    },[navigate]);
 
     return (
         <div className="shorten-main">
