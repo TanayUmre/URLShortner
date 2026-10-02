@@ -7,12 +7,18 @@ import {useNavigate} from "react-router-dom"
 function Home(){
 
     const [inputUrl, setInputUrl] = useState("");
-    const [shortenedUrl, setShortenedUrl] = useState("Your shortened URL will appear here");
+    const [shortenedUrl, setShortenedUrl] = useState("");
+    const [customAlias,setCustomAlias]=useState("");
+    const [useCustomAlias,setUseCustomAlias]=useState(false);
     const {showToast}=useToast();
     const navigate=useNavigate();
 
     const handleChange = (e)=> {
         setInputUrl(e.target.value);
+    }
+
+    const handleAliasChange = (e)=> {
+        setCustomAlias(e.target.value);
     }
 
     const handleSubmit = async (e) => {
@@ -23,6 +29,17 @@ function Home(){
             navigate("/signin");
             return;
         }
+        if(useCustomAlias){
+            if(customAlias.length<3||customAlias.length>20){
+                showToast("Custom alias must be between 3 and 20 characters","error");
+                return;
+            }
+            const aliaspat=/^[a-zA-Z0-9_-]+$/;
+            if(!aliaspat.test(customAlias)){
+                showToast("Custom alias can only contain letters, numbers, '_' and '-'","error");
+                return;
+            }
+        }
         try {
             const response = await fetch('http://localhost:8000/shorten',{
                 method:'POST',
@@ -30,7 +47,7 @@ function Home(){
                     'Content-Type':'application/json',
                     'Authorization':`Bearer ${token}`,
                 },
-                body:JSON.stringify({url:inputUrl}),
+                body:JSON.stringify({url:inputUrl,custom_alias:useCustomAlias?customAlias:null}),
             });
 
             const data=await response.json();
@@ -41,7 +58,7 @@ function Home(){
             }
 
             setShortenedUrl(data.url);
-            showToast("URL shortened successfully","success");
+            showToast(data.message,"success");
         } 
         catch(error){
             showToast("Unable to connect to server","error");
@@ -56,12 +73,26 @@ function Home(){
                 <p className="shorten-subheading">Fast. Simple. Easy to Share.</p>
                 <form onSubmit={handleSubmit} className="shorten-form">
                     <input className="urlinput" type="url" placeholder="Paste your url here..." value={inputUrl} onChange={handleChange} required></input>
+                    <label className="alias-toggle">
+                        <input type="checkbox" checked={useCustomAlias} onChange={(e)=>{
+                            setUseCustomAlias(e.target.checked);
+                            if(!e.target.checked){
+                                setCustomAlias("");
+                            }
+                        }}/>
+                        <span>Use custom alias</span>
+                    </label>
+                    {useCustomAlias && (
+                        <input className="urlinput" type="text" placeholder="Enter your custom alias..." value={customAlias} onChange={(e)=>setCustomAlias(e.target.value)} maxLength={20}/>
+                    )}
                     <button className="shorten-button" type="submit">Shorten URL</button>
                 </form>
-                <div className="shortened-url-section">
-                    <p>Your shortened URL</p>
-                    <a href={`http://localhost:8000/${shortenedUrl}`} target="_blank" rel="noopener noreferrer">{shortenedUrl}</a>
-                </div>
+                {shortenedUrl && (
+                    <div className="shortened-url-section">
+                        <p>Your shortened URL</p>
+                        <a href={`http://localhost:8000/${shortenedUrl}`} target="_blank" rel="noopener noreferrer">{shortenedUrl}</a>
+                    </div>
+                )}
                 <p className="expiry-text">Link Expires after 30 days</p>
             </main>
         </div>

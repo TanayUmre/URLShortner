@@ -1,7 +1,6 @@
 from database import Session
 from models import URL,User
 from pwdlib import PasswordHash
-from sqlalchemy.exc import IntegrityError
 import secrets,string
 from datetime import datetime,timedelta
 
@@ -38,25 +37,32 @@ def add_user(name:str,email:str,password:str):
         session.commit()
         return True,"User created successfully"
 
-def add_url(user_id:int,url:str):
+def add_url(user_id:int,url:str,custom_alias:str|None=None):
     with Session() as session:
         existing_url=session.query(URL).filter_by(url=url,user_id=user_id).first()
-        if existing_url:
-            return existing_url.shortened_url
+        if existing_url and not custom_alias:
+            return existing_url.shortened_url,True
         user=session.get(User,user_id)
         if not user:
             print("User not found. Sign Up")
-            return None
+            return None,False
         url_count = session.query(URL).filter_by(user_id=user_id).count()
         if url_count>=20:
-            return "Limit Reached for shortening the URLs. Delete some unused URLs to shorten new ones."
+            return ("Limit Reached for shortening the URLs. Delete some unused URLs to shorten new ones.",False)
 
-        code=create_short_code(session)
+        if custom_alias:
+            existing_alias=session.query(URL).filter_by(shortened_url=custom_alias).first()
+            if existing_alias:
+                return ("Custom alias is already taken",False)
+            code=custom_alias
+        else:
+            code=create_short_code(session)
+
         expires_at=datetime.now()+timedelta(days=30)
         new_url=URL(url=url,shortened_url=code,user_id=user_id,expires_at=expires_at)
         session.add(new_url)
         session.commit()
-        return new_url.shortened_url
+        return new_url.shortened_url,False
 
 def get_user(email:str,password:str):
     with Session() as session:

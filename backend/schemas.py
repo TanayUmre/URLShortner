@@ -12,11 +12,12 @@ class UserLogin(BaseModel):
 
 class URLCreate(BaseModel):
     url:HttpUrl
+    custom_alias:str|None=None
 
 class URLResponse(BaseModel):
     id:int
     url:str
-    storened_url:str
+    shortened_url:str
     user_id:int
     created_at:datetime
     clicked_count:int
@@ -26,6 +27,7 @@ class URLResponse(BaseModel):
 
 class ShortenResponse(BaseModel):
     url: str
+    message:str
 
 class ChangePassword(BaseModel):
     current_password: str

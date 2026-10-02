@@ -26,10 +26,14 @@ app.add_middleware(
 
 @app.post("/shorten",response_model=ShortenResponse)
 def shorten_url(request:URLCreate,current_user:User=Depends(get_current_user)):
-    shortened_url=add_url(current_user.id,str(request.url))
+    shortened_url,already_exist=add_url(current_user.id,str(request.url),request.custom_alias)
     if shortened_url=="Limit Reached for shortening the URLs. Delete some unused URLs to shorten new ones.":
         raise HTTPException(status_code=400,detail="You can only store 20 URLs. Please delete some unused URLs to shorten new ones.")
-    return ShortenResponse(url=shortened_url)
+    if shortened_url=="Custom alias is already taken":
+        raise HTTPException(status_code=409,detail="Custom alias is already taken")
+    if already_exist:
+        return ShortenResponse(url=shortened_url,message="This URL is already shortened")
+    return ShortenResponse(url=shortened_url,message="URL shortened successfully")
 
 @app.post("/signup")
 def signup_user(request:UserCreate):
