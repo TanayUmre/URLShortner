@@ -65,6 +65,9 @@ function Profile() {
                     ):(
                         <p>Loading...</p>
                     )}
+                    <button className="profile-button" onClick={()=>navigate("/dashboard")}>
+                        Dashboard
+                    </button>
                     <button className="profile-button">
                         Change Password
                     </button>

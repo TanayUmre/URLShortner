@@ -3,7 +3,7 @@ from fastapi import FastAPI,Depends
 from fastapi.middleware.cors import CORSMiddleware
 from database import Base,engine
 from schemas import URLCreate,URLResponse,UserCreate,UserLogin
-from crud import add_url,add_user,get_user
+from crud import add_url,add_user,get_user,get_user_urls
 from auth import create_access_token,get_current_user
 from models import User
 
@@ -44,6 +44,10 @@ def login_user(request:UserLogin):
 @app.get("/me")
 def get_me(current_user:User=Depends(get_current_user)):
     return {"id":current_user.id,"name":current_user.name,"email":current_user.email}
+
+@app.get("/urls")
+def get_urls(current_user:User=Depends(get_current_user)):
+    return get_user_urls(current_user.id)
 
 if __name__=="__main__":
     uvicorn.run(app,host="0.0.0.0",port=8000)

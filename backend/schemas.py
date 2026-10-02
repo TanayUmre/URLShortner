@@ -1,4 +1,5 @@
 from pydantic import BaseModel,HttpUrl
+from datetime import datetime
 
 class UserCreate(BaseModel):
     name:str
@@ -13,4 +14,11 @@ class URLCreate(BaseModel):
     url:HttpUrl
 
 class URLResponse(BaseModel):
-    url: str
+    id:int
+    url:str
+    storened_url:str
+    user_id:int
+    created_at:datetime
+    model_config={
+        "from-attributes":True
+    }

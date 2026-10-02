@@ -344,6 +344,10 @@
   color: white;
 }
 
+.profile-button + .profile-button{
+  margin-top: 12px;
+}
+
 .profile-button:hover{
   background-color: #66A3BF;
 }
@@ -357,4 +361,62 @@
 .logout-button:hover{
   background-color: #66A3BF;
   color: white;
+}
+
+.dashboard-section{
+  min-height: calc(100vh - 70px);
+  padding: 40px 20px;
+  box-sizing: border-box;
+}
+
+.dashboard-container{
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.dashboard-title{
+  margin: 0 0 30px;
+  color: #3368A0;
+  font-size: 32px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.url-list{
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.url-card{
+  background-color: white;
+  border: 1px solid #C8DFDB;
+  border-radius: 12px;
+  padding: 22px;
+  box-sizing: border-box;
+}
+
+.url-info{
+  padding: 10px 0;
+  border-bottom: 1px solid #C8DFDB;
+}
+
+.url-info:last-child{
+  border-bottom: none;
+}
+
+.url-info span{
+  display: block;
+  margin-bottom: 5px;
+  color: #777;
+  font-size: 13px;
+}
+
+.url-info p{
+  margin: 0;
+  color: #3368A0;
+  font-size: 15px;
+  font-weight: 600;
+  word-break: break-word;
 }
