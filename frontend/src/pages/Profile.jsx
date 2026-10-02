@@ -74,7 +74,7 @@ function Profile() {
                     <button className="profile-button" onClick={()=>navigate("/dashboard")}>
                         Dashboard
                     </button>
-                    <button className="profile-button">
+                    <button className="profile-button" onClick={()=>navigate("/change-password")}>
                         Change Password
                     </button>
                     <button className="logout-button" onClick={handleLogout}>

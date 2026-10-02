@@ -577,3 +577,41 @@
     transform: translate(-50%, 8px);
   }
 }
+
+.auth-card > .profile-button {
+  margin-top: 15px;
+}
+
+.password-input-wrapper{
+  position: relative;
+  width: 100%;
+}
+
+.password-input-wrapper input{
+  width: 100%;
+  padding-right: 45px;
+}
+
+.password-toggle{
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  border: none;
+  background: transparent;
+
+  color: #3368A0;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 4px;
+}
+
+.password-toggle:hover{
+  color: #66A3BF;
+}

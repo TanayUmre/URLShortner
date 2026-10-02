@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {Link,useNavigate} from "react-router-dom";
 import Navbar from "../components/Navbar";
+import PasswordInput from "../components/PasswordInput";
 import { useToast } from "../components/ToastContext";
 import "../all.css";
 
@@ -49,7 +50,8 @@ function SignUp(){
             });
             const loginData=await loginResp.json();
             if(!loginResp.ok){
-                throw new Error(loginData.detail || "Login failed after signup");
+                showToast(loginData.detail||"Login failed after signup","error");
+                return;
             }
             localStorage.setItem("access_token",loginData.access_token);
             showToast("Account created successfully","success");
@@ -80,14 +82,8 @@ function SignUp(){
                             <label htmlFor="email">Email</label>
                             <input id="email" type="email" placeholder="Enter your email" value={useremail} onChange={(e)=>setUseremail(e.target.value)} required></input>
                         </div>
-                        <div className="form-group">
-                            <label htmlFor="password">Password</label>
-                            <input id="password" type="password" placeholder="Enter your password" value={userpassword} onChange={(e)=>setUserpassword(e.target.value)} required></input>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="confirm-password">Confirm Password</label>
-                            <input id="confirm-password" type="password" placeholder="Confirm your password" value={confirmPassword} onChange={(e)=>{setConfirmPassword(e.target.value);setPasswordError("");}} required></input>
-                        </div>
+                        <PasswordInput id="password" label="Password" placeholder="Enter your password" value={userpassword} onChange={(e)=>setUserpassword(e.target.value)} required/>
+                        <PasswordInput id="confirm-password" label="Confirm Password" placeholder="Confirm your password" value={confirmPassword} onChange={(e)=>setConfirmPassword(e.target.value)} required/>
                         <button type="submit" className="auth-button">Create Account</button>
                     </form>
                     <p className="auth-footer">Already have an account?{''}<Link to="/signin">Sign In</Link></p>
