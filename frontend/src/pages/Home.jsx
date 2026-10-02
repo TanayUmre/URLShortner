@@ -60,7 +60,7 @@ function Home(){
                 </form>
                 <div className="shortened-url-section">
                     <p>Your shortened URL</p>
-                    <a href={shortenedUrl} target="_blank" rel="noopener noreferrer">{shortenedUrl}</a>
+                    <a href={`http://localhost:8000/${shortenedUrl}`} target="_blank" rel="noopener noreferrer">{shortenedUrl}</a>
                 </div>
                 <p className="expiry-text">Link Expires after 30 days</p>
             </main>
