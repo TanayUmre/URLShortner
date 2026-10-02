@@ -61,6 +61,13 @@ def delete_user_url(url_id:int,current_user:User=Depends(get_current_user)):
         return {"message":"URL not found or unauthorized"}
     return {"message":"URL deleted Successfully"}
 
+@app.post("/change-password")
+def change_user_password(request:ChangePassword,current_user:User=Depends(get_current_user)):
+    success,message=change_password(current_user.id,request.current_password,request.new_password)
+    if not success:
+        raise HTTPException(status_code=400,detail=message)
+    return {"message":message}
+
 @app.get("/{short_code}")
 def redirect_code(short_code:str):
     org_url=get_url_by_short_code(short_code)
@@ -69,13 +76,6 @@ def redirect_code(short_code:str):
     if org_url=="Shortened URL has expired":
         raise HTTPException(status_code=410,detail="Shortened URL has expired")
     return RedirectResponse(url=org_url)
-
-@app.post("/change-password")
-def change_user_password(request:ChangePassword,current_user:User=Depends(get_current_user)):
-    success,message=change_password(current_user.id,request.current_password,request.new_password)
-    if not success:
-        raise HTTPException(status_code=400,detail=message)
-    return {"message":message}
 
 if __name__=="__main__":
     uvicorn.run(app,host="0.0.0.0",port=8000)
