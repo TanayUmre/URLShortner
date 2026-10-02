@@ -420,3 +420,22 @@
   font-weight: 600;
   word-break: break-word;
 }
+
+.delete-button{
+  margin-top: 15px;
+  width: 100%;
+  padding: 11px;
+  border: none;
+  border-radius: 8px;
+  background-color: #C8DFDB;
+  color: #3368A0;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.delete-button:hover{
+  background-color: #66A3BF;
+  color: white;
+}

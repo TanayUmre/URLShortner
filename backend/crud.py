@@ -67,11 +67,13 @@ def get_user_urls(user_id:int)->list:
             return []
         return urls
 
-def delete_url(url_id:int):
+def delete_url(url_id:int,user_id:int):
     with Session() as session:
         url=session.get(URL,url_id)
         if not url:
-            print("No url with current ID")
-            return 
+            return False
+        if url.user_id!=user_id:
+            return False
         session.delete(url)
         session.commit()
+        return True

@@ -6,6 +6,29 @@ function Dashboard(){
     const [urls,setUrls]=useState([]);
     const [error,setError]=useState("");
 
+    const handleDelete=async (urlID)=>{
+        const token=localStorage.getItem("access_token");
+        try{
+            const resp=await fetch(`http://localhost:8000/urls/${urlID}`,
+                {
+                    method:"DELETE",
+                    headers:{
+                        "Authorization":`Bearer ${token}`,
+                    },
+                }
+            );
+            const data=await resp.json();
+            if(!resp.ok)
+            {
+                throw new Error(data.detail || "Failed to delete URL");
+            }
+            setUrls((currentUrls)=>currentUrls.filter((url)=>url.id!==urlID));
+        }
+        catch(error){
+            setError(error.message)
+        }
+    }
+
     useEffect(()=>{
         const token=localStorage.getItem("access_token");
         if(!token){
@@ -61,6 +84,7 @@ function Dashboard(){
                                         <span>Created At</span>
                                         <p>{new Date(item.created_at).toLocaleString()}</p>
                                     </div>
+                                    <button className="delete-button" onClick={()=>handleDelete(item.id)}>Delete</button>
                                 </div>
                             ))}
                         </div>

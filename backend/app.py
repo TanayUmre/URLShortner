@@ -3,7 +3,7 @@ from fastapi import FastAPI,Depends
 from fastapi.middleware.cors import CORSMiddleware
 from database import Base,engine
 from schemas import URLCreate,URLResponse,UserCreate,UserLogin
-from crud import add_url,add_user,get_user,get_user_urls
+from crud import add_url,add_user,get_user,get_user_urls,delete_url
 from auth import create_access_token,get_current_user
 from models import User
 
@@ -48,6 +48,13 @@ def get_me(current_user:User=Depends(get_current_user)):
 @app.get("/urls")
 def get_urls(current_user:User=Depends(get_current_user)):
     return get_user_urls(current_user.id)
+
+@app.delete("/urls/{url_id}")
+def delete_user_url(url_id:int,current_user:User=Depends(get_current_user)):
+    deleted=delete_url(url_id,current_user.id)
+    if not deleted:
+        return {"message":"URL not found or unauthorized"}
+    return {"message":"URL deleted Successfully"}
 
 if __name__=="__main__":
     uvicorn.run(app,host="0.0.0.0",port=8000)
