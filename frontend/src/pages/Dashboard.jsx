@@ -6,6 +6,11 @@ function Dashboard(){
     const [urls,setUrls]=useState([]);
     const [error,setError]=useState("");
 
+    const totalUrls=urls.length;
+    const totalClicks=urls.reduce((total,url)=>total+url.clicked_count,0);
+    const activeUrls=urls.filter((url)=>new Date(url.expires_at)>new Date()).length;
+    const expiredUrls=urls.filter((url)=>new Date(url.expires_at)<=new Date()).length;
+
     const handleDelete=async (urlID)=>{
         const token=localStorage.getItem("access_token");
         try{
@@ -64,6 +69,24 @@ function Dashboard(){
                     <h1 className="dashboard-title">
                         Your Dashboard
                     </h1>
+                    <div className="stats-grid">
+                        <div className="stat-card">
+                            <span>Total URLs</span>
+                            <p>{totalUrls}</p>
+                        </div>
+                        <div className="stat-card">
+                            <span>Active</span>
+                            <p>{activeUrls}</p>
+                        </div>
+                        <div className="stat-card">
+                            <span>Expired</span>
+                            <p>{expiredUrls}</p>
+                        </div>
+                        <div className="stat-card">
+                            <span>Total Clicks</span>
+                            <p>{totalClicks}</p>
+                        </div>
+                    </div>
                     {error?(
                         <p className="password-error">{error}</p>
                     ):urls.length===0?(
@@ -87,7 +110,17 @@ function Dashboard(){
                                         <p>{new Date(item.created_at).toLocaleString()}</p>
                                     </div>
                                     <div className="url-info">
-                                        <span>Click Count</span>
+                                        <span>Expires At</span>
+                                        <p>{new Date(item.expires_at).toLocaleString()}</p>
+                                    </div>
+                                    <div className="url-info">
+                                        <span>Status</span>
+                                        <p>
+                                            {new Date(item.expires_at)>new Date()?"Active":"Expired"}
+                                        </p>
+                                    </div>
+                                    <div className="url-info">
+                                        <span>Click</span>
                                         <p>{item.clicked_count}</p>
                                     </div>
                                     <button className="delete-button" onClick={()=>handleDelete(item.id)}>Delete</button>

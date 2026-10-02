@@ -19,5 +19,6 @@ class URL(Base):
     shortened_url:Mapped[str]=mapped_column(String(20),unique=True,nullable=False)
     user_id:Mapped[int]=mapped_column(ForeignKey("users.id"),nullable=False)
     created_at:Mapped[datetime]=mapped_column(DateTime,default=datetime.now)
+    expires_at:Mapped[datetime]=mapped_column(DateTime,nullable=True)
     user:Mapped["User"]=relationship(back_populates="urls")
     clicked_count:Mapped[int]=mapped_column(default=0,nullable=False)

@@ -461,3 +461,51 @@
   background-color: #66A3BF;
   color: white;
 }
+
+.stats-grid{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.stat-card{
+  background-color: white;
+  border: 1px solid #C8DFDB;
+  border-radius: 12px;
+  padding: 20px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.stat-card span{
+  display: block;
+  margin-bottom: 8px;
+  color: #777;
+  font-size: 13px;
+}
+
+.stat-card p{
+  margin: 0;
+  color: #3368A0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+@media (max-width: 700px){
+  .stats-grid{
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.url-info a{
+  color: #3368A0;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  word-break: break-word;
+}
+
+.url-info a:hover{
+  color: #66A3BF;
+}

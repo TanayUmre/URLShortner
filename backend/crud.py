@@ -3,6 +3,7 @@ from models import URL,User
 from pwdlib import PasswordHash
 from sqlalchemy.exc import IntegrityError
 import secrets,string
+from datetime import datetime,timedelta
 
 CHARACTERS=string.ascii_letters+string.digits
 passwordhash=PasswordHash.recommended()
@@ -43,7 +44,8 @@ def add_url(user_id:int,url:str):
             return None
 
         code=create_short_code(session)
-        new_url=URL(url=url,shortened_url=code,user_id=user_id)
+        expires_at=datetime.now()+timedelta(days=30)
+        new_url=URL(url=url,shortened_url=code,user_id=user_id,expires_at=expires_at)
         session.add(new_url)
         session.commit()
         return new_url.shortened_url
@@ -83,6 +85,8 @@ def get_url_by_short_code(short_code:str):
         url=session.query(URL).filter_by(shortened_url=short_code).first()
         if not url:
             return None
+        if url.expires_at and datetime.now()>=url.expires_at:
+            return "Shortened URL has expired"
         url.clicked_count+=1
         session.commit()
         return url.url
