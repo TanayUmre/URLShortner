@@ -1,20 +1,28 @@
 import {useState} from 'react';
 import Navbar from '../components/Navbar';
+import { useToast } from '../components/ToastContext';
 import "../all.css";
+import {useNavigate} from "react-router-dom"
 
 function Home(){
 
     const [inputUrl, setInputUrl] = useState("");
     const [shortenedUrl, setShortenedUrl] = useState("Your shortened URL will appear here");
+    const {showToast}=useToast();
+    const navigate=useNavigate();
 
     const handleChange = (e)=> {
         setInputUrl(e.target.value);
     }
 
-    const token=localStorage.getItem("access_token");
-
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const token=localStorage.getItem("access_token");
+        if(!token){
+            showToast("Please log in to shorten URLs.","error");
+            navigate("/signin");
+            return;
+        }
         try {
             const response = await fetch('http://localhost:8000/shorten',{
                 method:'POST',
@@ -25,18 +33,20 @@ function Home(){
                 body:JSON.stringify({url:inputUrl}),
             });
 
+            const data=await response.json();
+
             if (!response.ok){
-                throw new Error('Network response was not ok');
+                showToast(data.detail||"Failed to shorten URL","error");
+                return;
             }
 
-            const data=await response.json();
             setShortenedUrl(data.url);
-
+            showToast("URL shortened successfully","success");
         } 
         catch(error){
-            console.error('Error:',error);
+            showToast("Unable to connect to server","error");
         }
-    }
+    };
 
     return (
         <div className="shorten-main">

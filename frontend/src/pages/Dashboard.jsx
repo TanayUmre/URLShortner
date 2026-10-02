@@ -1,10 +1,11 @@
 import Navbar from "../components/Navbar";
+import { useToast } from "../components/ToastContext";
 import "../all.css";
 import {useEffect,useState} from "react";
 
 function Dashboard(){
     const [urls,setUrls]=useState([]);
-    const [error,setError]=useState("");
+    const {showToast}=useToast();
 
     const totalUrls=urls.length;
     const totalClicks=urls.reduce((total,url)=>total+url.clicked_count,0);
@@ -28,16 +29,17 @@ function Dashboard(){
                 throw new Error(data.detail || "Failed to delete URL");
             }
             setUrls((currentUrls)=>currentUrls.filter((url)=>url.id!==urlID));
+            showToast("URL deleted successfully","success");
         }
         catch(error){
-            setError(error.message)
+            showToast(error.message,"error");
         }
     }
 
     useEffect(()=>{
         const token=localStorage.getItem("access_token");
         if(!token){
-            setError("You are not logged in. Please Log in to view dashboard.")
+            showToast("You must be logged in to view the dashboard","error");
             return;
         }
         const getUrls=async()=>{
@@ -55,7 +57,10 @@ function Dashboard(){
                 setUrls(data);
             }
             catch(error){
-                setError(error.message);
+                setToast({
+                    message:error.message,
+                    type:"error"
+                });
             }
         };
         getUrls();
@@ -87,11 +92,9 @@ function Dashboard(){
                             <p>{totalClicks}</p>
                         </div>
                     </div>
-                    {error?(
-                        <p className="password-error">{error}</p>
-                    ):urls.length===0?(
+                    {urls.length===0?(
                         <p>No shortened URLs found</p>
-                    ):(
+                        ):(
                         <div className="url-list">
                             {urls.map((item)=>(
                                 <div className="url-card" key={item.id}>

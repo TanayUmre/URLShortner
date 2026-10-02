@@ -2,8 +2,8 @@ import uvicorn
 from fastapi import FastAPI,Depends,HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from database import Base,engine
-from schemas import URLCreate,URLResponse,UserCreate,UserLogin,ShortenResponse
-from crud import add_url,add_user,get_user,get_user_urls,delete_url,get_url_by_short_code
+from schemas import URLCreate,URLResponse,UserCreate,UserLogin,ShortenResponse,ChangePassword
+from crud import add_url,add_user,get_user,get_user_urls,delete_url,get_url_by_short_code,change_password
 from auth import create_access_token,get_current_user
 from models import User
 from fastapi.responses import RedirectResponse
@@ -27,18 +27,22 @@ app.add_middleware(
 @app.post("/shorten",response_model=ShortenResponse)
 def shorten_url(request:URLCreate,current_user:User=Depends(get_current_user)):
     shortened_url=add_url(current_user.id,str(request.url))
+    if shortened_url=="Limit Reached for shortening the URLs. Delete some unused URLs to shorten new ones.":
+        raise HTTPException(status_code=400,detail="You can only store 20 URLs. Please delete some unused URLs to shorten new ones.")
     return ShortenResponse(url=shortened_url)
 
 @app.post("/signup")
 def signup_user(request:UserCreate):
-    add_user(request.name,request.email,request.password)
-    return {"message":"User created successfully"}
+    success,message=add_user(request.name,request.email,request.password)
+    if not success:
+        raise HTTPException(status_code=409,detail=message)
+    return {"message":message}
 
 @app.post("/login")
 def login_user(request:UserLogin):
     user=get_user(request.email,request.password)
     if not user:
-        return {"message":"Invalid email or password"}
+        raise HTTPException(status_code=401,detail="Invalid email or password")
     tkn=create_access_token(user.id)
     return {"message":"Login successful","access_token":tkn}
 
@@ -65,6 +69,13 @@ def redirect_code(short_code:str):
     if org_url=="Shortened URL has expired":
         raise HTTPException(status_code=410,detail="Shortened URL has expired")
     return RedirectResponse(url=org_url)
+
+@app.post("/change-password")
+def change_user_password(request:ChangePassword,current_user:User=Depends(get_current_user)):
+    success,message=change_password(current_user.id,request.current_password,request.new_password)
+    if not success:
+        raise HTTPException(status_code=400,detail=message)
+    return {"message":message}
 
 if __name__=="__main__":
     uvicorn.run(app,host="0.0.0.0",port=8000)

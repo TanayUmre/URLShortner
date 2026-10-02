@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {Link,useNavigate} from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { useToast } from "../components/ToastContext";
 import "../all.css";
 
 function SignUp(){
@@ -8,7 +9,7 @@ function SignUp(){
     const [useremail,setUseremail]=useState("");
     const [userpassword,setUserpassword]=useState("");
     const [confirmPassword,setConfirmPassword]=useState("");
-    const [passwordError,setPasswordError]=useState("");
+    const {showToast}=useToast();
 
     const navigate=useNavigate();
 
@@ -16,10 +17,9 @@ function SignUp(){
         e.preventDefault();
 
         if(userpassword !== confirmPassword){
-            setPasswordError("Passwords Doesn't Match");
+            showToast("Passwords do not match","error");
             return;
         }
-        setPasswordError("");
         try{
             const resp=await fetch("http://localhost:8000/signup",{
                 method:"POST",
@@ -34,7 +34,8 @@ function SignUp(){
             });
             const data=await resp.json();
             if(!resp.ok){
-                throw new Error(data.message || "Failed to create account");
+                showToast(data.detail||data.message||"Failed to create account","error");
+                return;
             }
             const loginResp=await fetch("http://localhost:8000/login",{
                 method:"POST",
@@ -51,10 +52,11 @@ function SignUp(){
                 throw new Error(loginData.detail || "Login failed after signup");
             }
             localStorage.setItem("access_token",loginData.access_token);
+            showToast("Account created successfully","success");
             navigate("/profile");
         }
         catch(error){
-            console.error("Error:",error.message);
+            showToast("Unable to connect to server","error");
         }
     };
 
@@ -85,9 +87,6 @@ function SignUp(){
                         <div className="form-group">
                             <label htmlFor="confirm-password">Confirm Password</label>
                             <input id="confirm-password" type="password" placeholder="Confirm your password" value={confirmPassword} onChange={(e)=>{setConfirmPassword(e.target.value);setPasswordError("");}} required></input>
-                            {passwordError && (
-                                <p className="password-error">{passwordError}</p>
-                            )}
                         </div>
                         <button type="submit" className="auth-button">Create Account</button>
                     </form>

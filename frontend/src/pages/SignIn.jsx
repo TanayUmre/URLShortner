@@ -1,11 +1,13 @@
 import {useState} from 'react';
 import {Link,useNavigate} from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { useToast } from '../components/ToastContext';
 import '../all.css';
 
 function SignIn(){
     const [email,setEmail]=useState("");
     const [password,setPassword]=useState("");
+    const {showToast}=useToast();
 
     const navigate=useNavigate();
 
@@ -24,14 +26,15 @@ function SignIn(){
             });
             const data=await resp.json();
             if(!resp.ok){
-                throw new Error(data.detail || "Login failed"); 
+                showToast(data.detail||"Invalid email or password","error");
+                return; 
             }
             localStorage.setItem("access_token",data.access_token);
+            showToast("Login Successful","success");
             navigate("/profile");
-            console.log(data.message)
         }
         catch(error){
-            console.error("Login Error:",error);
+            showToast("Unable to connect to server","error");
         }
     };
 

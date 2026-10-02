@@ -1,22 +1,25 @@
 import Navbar from "../components/Navbar";
+import { useToast } from "../components/ToastContext";
 import "../all.css";
 import {useEffect,useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 function Profile() {
     const[user,setUser]=useState(null);
-    const[error,setError]=useState("");
+    const {showToast}=useToast();
     const navigate=useNavigate();
     
     const handleLogout=()=>{
         localStorage.removeItem("access_token");
+        showToast("Logged out successfully","success");
         navigate("/signin");
     }
 
     useEffect(()=>{
         const token=localStorage.getItem("access_token");
         if(!token){
-            setError("You are not logged in. Please log in to view your profile.");
+            showToast("You are not logged in. Please log in to view your profile.","error");
+            navigate("/signin");
             return
         }
         const getprofile=async()=>{
@@ -29,16 +32,21 @@ function Profile() {
                 });
                 const data=await response.json();
                 if(!response.ok){
-                    throw new Error(data.detail||"Failed to load profile");
+                    showToast(data.detail||"Failed to load profile","error");
+                    if(response.status===401){
+                        localStorage.removeItem("access_token");
+                        navigate("/signin");
+                    }
+                    return;
                 }
                 setUser(data);
             }
             catch(error){
-                setError(error.message);
+                showToast("Unable to connect to server","error");
             }
         };
         getprofile();
-    },[]);
+    },[showToast,navigate]);
 
     return (
         <div className="shorten-main">
@@ -49,9 +57,7 @@ function Profile() {
                         👤
                     </div>
                     <h2 className="profile-title">Your Profile</h2>
-                    {error?(
-                        <p className="password-error">{error}</p>
-                    ):user?(
+                    {user?(
                         <div className="profile-info">
                             <div className="profile-field">
                                 <span>Name</span>

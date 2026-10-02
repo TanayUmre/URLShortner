@@ -26,3 +26,7 @@ class URLResponse(BaseModel):
 
 class ShortenResponse(BaseModel):
     url: str
+
+class ChangePassword(BaseModel):
+    current_password: str
+    new_password: str

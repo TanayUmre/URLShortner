@@ -23,15 +23,18 @@ def create_short_code(session,length:int=6)->str:
 
 def add_user(name:str,email:str,password:str):
     with Session() as session:
+        existing_email=session.query(User).filter(User.email==email).first()
+        if existing_email:
+            return False,"Email is already registered"
+        existing_name=session.query(User).filter(User.name==name).first()
+        if existing_name:
+            return False,"Username is already taken"
+        
         hashedPw=passwordhash.hash(password)
         user=User(name=name,email=email,password_hash=hashedPw)
-        try:
-            session.add(user)
-            session.commit()
-            print("User Created:",user.id)
-        except IntegrityError:
-            session.rollback()
-            print("Email already present")
+        session.add(user)
+        session.commit()
+        return True,"User created successfully"
 
 def add_url(user_id:int,url:str):
     with Session() as session:
@@ -42,6 +45,9 @@ def add_url(user_id:int,url:str):
         if not user:
             print("User not found. Sign Up")
             return None
+        url_count = session.query(URL).filter_by(user_id=user_id).count()
+        if url_count>=20:
+            return "Limit Reached for shortening the URLs. Delete some unused URLs to shorten new ones."
 
         code=create_short_code(session)
         expires_at=datetime.now()+timedelta(days=30)
@@ -90,3 +96,14 @@ def get_url_by_short_code(short_code:str):
         url.clicked_count+=1
         session.commit()
         return url.url
+
+def change_password(user_id:int,current_password:str,new_password:str):
+    with Session() as session:
+        user=session.get(User,user_id)
+        if not user:
+            return False,"User not found"
+        if not passwordhash.verify(current_password,user.password_hash):
+            return False,"Incorrect current password"
+        user.password_hash=passwordhash.hash(new_password)
+        session.commit()
+        return True,"Password changed successfully"
