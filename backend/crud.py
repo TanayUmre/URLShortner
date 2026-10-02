@@ -104,6 +104,8 @@ def change_password(user_id:int,current_password:str,new_password:str):
             return False,"User not found"
         if not passwordhash.verify(current_password,user.password_hash):
             return False,"Incorrect current password"
+        if passwordhash.verify(new_password,user.password_hash):
+            return False,"New password must be different from your current password"
         user.password_hash=passwordhash.hash(new_password)
         session.commit()
         return True,"Password changed successfully"
