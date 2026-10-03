@@ -6,13 +6,14 @@ import {useNavigate} from "react-router-dom"
 
 function Dashboard(){
     const [urls,setUrls]=useState([]);
+    const [user,setUser]=useState(null);
     const {showToast}=useToast();
     const navigate=useNavigate();
 
-    const totalUrls=urls.length;
-    const totalClicks=urls.reduce((total,url)=>total+url.clicked_count,0);
+    const totalUrls=user?.total_urls_created??0;
+    const totalClicks=user?.total_clicks??0;
     const activeUrls=urls.filter((url)=>new Date(url.expires_at)>new Date()).length;
-    const expiredUrls=urls.filter((url)=>new Date(url.expires_at)<=new Date()).length;
+    const expiredUrls=totalUrls-activeUrls;
 
     const handleDelete=async (urlID)=>{
         const token=localStorage.getItem("access_token");
@@ -45,29 +46,39 @@ function Dashboard(){
             navigate("/signin");
             return;
         }
-        const getUrls=async()=>{
+        const getDashboardData=async()=>{
             try{
-                const resp=await fetch("http://localhost:8000/urls",{
-                    method:"GET",
-                    headers:{
-                        "Authorization":`Bearer ${token}`,
-                    },
-                });
-                const data=await resp.json();
-                if(!resp.ok){
-                    throw new Error(data.detail || "Failed to load URLs");
+                const [userResp,urlResp]=await Promise.all([
+                    fetch("http://localhost:8000/me",{
+                        method:"GET",
+                        headers:{
+                            "Authorization":`Bearer ${token}`,
+                        },
+                    }),
+                    fetch("http://localhost:8000/urls",{
+                        method:"GET",
+                        headers:{
+                            "Authorization":`Bearer ${token}`,
+                        },
+                    })
+                ]);
+                const userdata=await userResp.json();
+                const urldata=await urlResp.json();
+                if(!userResp.ok){
+                    throw new Error(userdata.detail || "Failed to load URLs");
                 }
-                setUrls(data);
+                if(!urlResp.ok){
+                    throw new Error(urldata.detail || "Failed to load URLs");
+                }
+                setUrls(urldata);
+                setUser(userdata);
             }
             catch(error){
-                setToast({
-                    message:error.message,
-                    type:"error"
-                });
+                showToast(error.message,"error");
             }
         };
-        getUrls();
-    },[navigate]);
+        getDashboardData();
+    },[navigate,showToast]);
 
     return (
         <div className="shorten-main">

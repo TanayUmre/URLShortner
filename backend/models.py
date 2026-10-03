@@ -10,6 +10,8 @@ class User(Base):
     email:Mapped[str]=mapped_column(String(100),unique=True,nullable=False)
     password_hash:Mapped[str]=mapped_column(String(255),nullable=False)
     profile_picture:Mapped[bytes|None]=mapped_column(LargeBinary,nullable=True)
+    total_urls_created: Mapped[int] = mapped_column(default=0, nullable=False)
+    total_clicks: Mapped[int] = mapped_column(default=0, nullable=False)
     urls:Mapped[list["URL"]]=relationship(back_populates="user",cascade="all,delete-orphan")
 
 class URL(Base):

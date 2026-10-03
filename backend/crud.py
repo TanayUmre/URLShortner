@@ -61,6 +61,7 @@ def add_url(user_id:int,url:str,custom_alias:str|None=None):
         expires_at=datetime.now()+timedelta(days=30)
         new_url=URL(url=url,shortened_url=code,user_id=user_id,expires_at=expires_at)
         session.add(new_url)
+        user.total_urls_created+=1
         session.commit()
         return new_url.shortened_url,False
 
@@ -102,6 +103,8 @@ def get_url_by_short_code(short_code:str):
         if url.expires_at and datetime.now()>=url.expires_at:
             return "Shortened URL has expired"
         url.clicked_count+=1
+        user=session.get(User,url.user_id)
+        user.total_clicks+=1
         session.commit()
         return url.url
 
@@ -119,3 +122,9 @@ def change_password(user_id:int,current_password:str,new_password:str):
         user.password_hash=passwordhash.hash(new_password)
         session.commit()
         return True,"Password changed successfully"
+
+def delete_expired_urls():
+    with Session() as session:
+        deleted_cnt=(session.query(URL).filter(URL.expires_at<=datetime.now())).delete(synchronize_session=False)
+        session.commit()
+        return deleted_cnt

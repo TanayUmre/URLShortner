@@ -8,7 +8,7 @@ from auth import create_access_token,get_current_user
 from models import User
 from fastapi.responses import RedirectResponse
 
-Base.metadata.create_all(engine)
+# Base.metadata.create_all(engine)
 
 app=FastAPI()
 
@@ -52,7 +52,7 @@ def login_user(request:UserLogin):
 
 @app.get("/me")
 def get_me(current_user:User=Depends(get_current_user)):
-    return {"id":current_user.id,"name":current_user.name,"email":current_user.email}
+    return {"id":current_user.id,"name":current_user.name,"email":current_user.email,"total_urls_created":current_user.total_urls_created,"total_clicks":current_user.total_clicks}
 
 @app.get("/urls")
 def get_urls(current_user:User=Depends(get_current_user)):
