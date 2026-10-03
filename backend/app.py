@@ -71,6 +71,10 @@ def change_user_password(request:ChangePassword,current_user:User=Depends(get_cu
         raise HTTPException(status_code=400,detail=message)
     return {"message":message}
 
+@app.get("/healthz")
+def health_check():
+    return {"status":"ok"}
+
 @app.get("/{short_code}")
 def redirect_code(short_code:str):
     org_url=get_url_by_short_code(short_code)
