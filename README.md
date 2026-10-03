@@ -6,7 +6,7 @@ Users can generate unique short URLs, optionally choose custom aliases, track cl
 
 ## 🖥️ URL Shortening
 
-![URL Shortening](screenshots/home.png)
+![URL Shortening](screenshots/Home.png)
 
 ## 🚀 Live Demo
 
