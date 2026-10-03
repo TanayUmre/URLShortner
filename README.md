@@ -4,6 +4,10 @@ A full-stack URL shortening application built with **React** and **FastAPI** tha
 
 Users can generate unique short URLs, optionally choose custom aliases, track clicks, manage their URLs through a dashboard, and automatically expire links after 30 days.
 
+## 🖥️ URL Shortening
+
+![URL Shortening](screenshots/home.png)
+
 ## 🚀 Live Demo
 
 **Frontend:** https://urlshortener-frontend-1uyh.onrender.com
@@ -116,3 +120,30 @@ URLShortner/
 │
 ├── .gitignore
 └── README.md
+
+
+## 📸 Screenshots
+
+### 🖥️ Home
+
+![Home](screenshots/Home2.png)
+
+### 📊 Dashboard
+
+![Dashboard](screenshots/Dashboard.png)
+
+### 👤 Profile
+
+![Profile](screenshots/Profile.png)
+
+### 📝 Sign Up
+
+![Sign Up](screenshots/SignUp.png)
+
+### 🔐 Sign In
+
+![Sign In](screenshots/SignIn.png)
+
+### 🔑 Change Password
+
+![Change Password](screenshots/ChangePassword.png)
