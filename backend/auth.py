@@ -4,8 +4,9 @@ from fastapi import HTTPException,status,Depends
 from fastapi.security import HTTPBearer
 from database import Session,engine
 from models import User
+import os
 
-SECRET_KEY="1542e85f7b2106e5de62a2035ed2fc7076e3432cc5589f790e35b22d3522a9d9"
+SECRET_KEY=os.getenv("SECRET_KEY")
 ALGORITHM="HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 security=HTTPBearer()
@@ -19,7 +20,7 @@ def get_current_user(credentials:str=Depends(security)):
         if user_id is None:
             raise credentials_exception
         user_id=int(user_id)
-    except JWTError,ValueError:
+    except (JWTError,ValueError):
         raise credentials_exception
     with Session() as session:
         user=session.query(User).filter(User.id==user_id).first()
