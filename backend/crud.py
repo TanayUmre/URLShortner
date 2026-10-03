@@ -125,6 +125,12 @@ def change_password(user_id:int,current_password:str,new_password:str):
 
 def delete_expired_urls():
     with Session() as session:
-        deleted_cnt=(session.query(URL).filter(URL.expires_at<=datetime.now())).delete(synchronize_session=False)
+        expired_urls=session.query(URL).filter(URL.expires_at<=datetime.now()).all()
+        for url in expired_urls:
+            session.delete(url)
         session.commit()
-        return deleted_cnt
+        return len(expired_urls)
+
+if __name__=="__main__":
+    delete=delete_expired_urls()
+    print(f"Deleted {delete} expired URLs")

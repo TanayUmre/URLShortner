@@ -1,7 +1,6 @@
 import uvicorn
 from fastapi import FastAPI,Depends,HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from database import Base,engine
 from schemas import URLCreate,URLResponse,UserCreate,UserLogin,ShortenResponse,ChangePassword
 from crud import add_url,add_user,get_user,get_user_urls,delete_url,get_url_by_short_code,change_password
 from auth import create_access_token,get_current_user
