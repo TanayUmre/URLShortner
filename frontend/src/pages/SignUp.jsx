@@ -14,11 +14,18 @@ function SignUp(){
     const {showToast}=useToast();
 
     const navigate=useNavigate();
+    const emailpat=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     const handleSubmit= async (e)=>{
         e.preventDefault();
         if(userpassword.length<8){
             showToast("Password must be at least 8 characters long","error");
+            return;
+        }
+
+        if(emailpat.test(useremail))
+        {
+            showToast("Please enter a valid email address","error");
             return;
         }
 
