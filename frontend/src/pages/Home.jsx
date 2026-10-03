@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import { useToast } from '../components/ToastContext';
 import "../all.css";
 import {useNavigate} from "react-router-dom"
+import api from '../api';
 
 function Home(){
 
@@ -15,10 +16,6 @@ function Home(){
 
     const handleChange = (e)=> {
         setInputUrl(e.target.value);
-    }
-
-    const handleAliasChange = (e)=> {
-        setCustomAlias(e.target.value);
     }
 
     const handleSubmit = async (e) => {
@@ -41,27 +38,23 @@ function Home(){
             }
         }
         try {
-            const response = await fetch('http://localhost:8000/shorten',{
-                method:'POST',
-                headers:{
-                    'Content-Type':'application/json',
-                    'Authorization':`Bearer ${token}`,
+            const response = await api.post("/shorten",{
+                    url:inputUrl,
+                    custom_alias:useCustomAlias?customAlias:null,
                 },
-                body:JSON.stringify({url:inputUrl,custom_alias:useCustomAlias?customAlias:null}),
-            });
+                {
+                    headers:{
+                        Authorization:`Bearer ${token}`,
+                    },
+                }
+            );
 
-            const data=await response.json();
-
-            if (!response.ok){
-                showToast(data.detail||"Failed to shorten URL","error");
-                return;
-            }
-
+            const data=response.data;
             setShortenedUrl(data.url);
             showToast(data.message,"success");
         } 
         catch(error){
-            showToast("Unable to connect to server","error");
+            showToast(error.response?.data?.detail||"Unable to connect to server","error");
         }
     };
 
@@ -90,7 +83,7 @@ function Home(){
                 {shortenedUrl && (
                     <div className="shortened-url-section">
                         <p>Your shortened URL</p>
-                        <a href={`http://localhost:8000/${shortenedUrl}`} target="_blank" rel="noopener noreferrer">{shortenedUrl}</a>
+                        <a href={`/${shortenedUrl}`} target="_blank" rel="noopener noreferrer">{shortenedUrl}</a>
                     </div>
                 )}
                 <p className="expiry-text">Link Expires after 30 days</p>

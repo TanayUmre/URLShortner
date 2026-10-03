@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import PasswordInput from "../components/PasswordInput";
 import { useToast } from "../components/ToastContext";
 import "../all.css";
+import api from "../api";
 
 function SignUp(){
     const [username,setUsername]=useState("");
@@ -26,43 +27,22 @@ function SignUp(){
             return;
         }
         try{
-            const resp=await fetch("http://localhost:8000/signup",{
-                method:"POST",
-                headers:{
-                    "Content-Type":"application/json"
-                },
-                body:JSON.stringify({
-                    name:username,
+            const resp=await api.post("/signup",{
+                name:username,
+                email:useremail,
+                password:userpassword
+            });
+            const loginResp=await api.post("/login",{
                     email:useremail,
                     password:userpassword
-                }),
             });
-            const data=await resp.json();
-            if(!resp.ok){
-                showToast(data.detail||data.message||"Failed to create account","error");
-                return;
-            }
-            const loginResp=await fetch("http://localhost:8000/login",{
-                method:"POST",
-                headers:{
-                    "Content-Type":"application/json"
-                },
-                body:JSON.stringify({
-                    email:useremail,
-                    password:userpassword
-                }),
-            });
-            const loginData=await loginResp.json();
-            if(!loginResp.ok){
-                showToast(loginData.detail||"Login failed after signup","error");
-                return;
-            }
+            const loginData=loginResp.data;
             localStorage.setItem("access_token",loginData.access_token);
             showToast("Account created successfully","success");
             navigate("/profile");
         }
         catch(error){
-            showToast("Unable to connect to server","error");
+            showToast(error.response?.data?.detail||"Unable to connect to server","error");
         }
     };
 

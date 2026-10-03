@@ -3,6 +3,7 @@ import { useToast } from "../components/ToastContext";
 import "../all.css";
 import {useEffect,useState} from "react";
 import {useNavigate} from "react-router-dom"
+import api from "../api";
 
 function Dashboard(){
     const [urls,setUrls]=useState([]);
@@ -18,26 +19,18 @@ function Dashboard(){
     const handleDelete=async (urlID)=>{
         const token=localStorage.getItem("access_token");
         try{
-            const resp=await fetch(`http://localhost:8000/urls/${urlID}`,
-                {
-                    method:"DELETE",
-                    headers:{
-                        "Authorization":`Bearer ${token}`,
-                    },
-                }
-            );
-            const data=await resp.json();
-            if(!resp.ok)
-            {
-                throw new Error(data.detail || "Failed to delete URL");
-            }
+            await api.delete(`/urls/${urlID}`,{
+                headers:{
+                    Authorization:`Bearer ${token}`,
+                },
+            });
             setUrls((currentUrls)=>currentUrls.filter((url)=>url.id!==urlID));
             showToast("URL deleted successfully","success");
         }
         catch(error){
-            showToast(error.message,"error");
+            showToast(error.response?.data?.detail||"Failed to delete URL","error");
         }
-    }
+    };
 
     useEffect(()=>{
         const token=localStorage.getItem("access_token");
@@ -49,32 +42,22 @@ function Dashboard(){
         const getDashboardData=async()=>{
             try{
                 const [userResp,urlResp]=await Promise.all([
-                    fetch("http://localhost:8000/me",{
-                        method:"GET",
+                    api.get("/me",{
                         headers:{
-                            "Authorization":`Bearer ${token}`,
+                            Authorization:`Bearer ${token}`,
                         },
                     }),
-                    fetch("http://localhost:8000/urls",{
-                        method:"GET",
+                    api.get("/urls",{
                         headers:{
-                            "Authorization":`Bearer ${token}`,
+                            Authorization:`Bearer ${token}`,
                         },
                     })
                 ]);
-                const userdata=await userResp.json();
-                const urldata=await urlResp.json();
-                if(!userResp.ok){
-                    throw new Error(userdata.detail || "Failed to load URLs");
-                }
-                if(!urlResp.ok){
-                    throw new Error(urldata.detail || "Failed to load URLs");
-                }
-                setUrls(urldata);
-                setUser(userdata);
+                setUrls(urlResp.data);
+                setUser(userResp.data);
             }
             catch(error){
-                showToast(error.message,"error");
+                showToast(error.response?.data?.detail||"Failed to load Dashboard","error");
             }
         };
         getDashboardData();
@@ -118,7 +101,7 @@ function Dashboard(){
                                     </div>
                                     <div className="url-info">
                                         <span>Short URL</span>
-                                        <a href={`http://localhost:8000/${item.shortened_url}`} target="_blank" rel="noopener noreferrer">
+                                        <a href={`/${item.shortened_url}`} target="_blank" rel="noopener noreferrer">
                                             {item.shortened_url}
                                         </a>
                                     </div>

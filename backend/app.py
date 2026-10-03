@@ -75,6 +75,15 @@ def change_user_password(request:ChangePassword,current_user:User=Depends(get_cu
 def health_check():
     return {"status":"ok"}
 
+@app.get("/resolve/{short_code}")
+def resolve_short_url(short_code:str):
+    org_url=get_url_by_short_code(short_code)
+    if not org_url:
+        raise HTTPException(status_code=404,detail="Short URL not found")
+    if org_url=="Shortened URL has expired":
+        raise HTTPException(status_code=410,detail="Shortened URL has expired")
+    return {"url":org_url}
+
 @app.get("/{short_code}")
 def redirect_code(short_code:str):
     org_url=get_url_by_short_code(short_code)

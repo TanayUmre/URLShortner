@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import PasswordInput from "../components/PasswordInput";
 import { useToast } from "../components/ToastContext";
 import "../all.css"
+import api from "../api";
 
 function ChangePassword(){
     const [currentPassword,setCurrentPassword]=useState("");
@@ -18,7 +19,7 @@ function ChangePassword(){
             showToast("Please log in to change your password","error");
             navigate("/signin");
         }
-    },[navigate]);
+    },[navigate,showToast]);
 
     const handleSubmit=async (e)=>{
         e.preventDefault();
@@ -33,30 +34,22 @@ function ChangePassword(){
         if(newPassword!==confirmPassword){
             showToast("New password and Confirm password does not match","error");
             return;
-        };
+        }
         const token=localStorage.getItem("access_token");
         try{
-            const resp=await fetch("http://localhost:8000/change-password",{
-                method:"POST",
+            await api.post("/change-password",{
+                current_password:currentPassword,
+                new_password:newPassword
+            },{
                 headers:{
-                    "Content-Type":"application/json",
-                    "Authorization":`Bearer ${token}`
+                    Authorization:`Bearer ${token}`,
                 },
-                body:JSON.stringify({
-                    current_password:currentPassword,
-                    new_password:newPassword
-                }),
             });
-            const data=await resp.json();
-            if(!resp.ok){
-                showToast(data.detail||"Fail to change password","error");
-                return;
-            }
             showToast("Password changed successfully","success");
             navigate("/profile");
         }
         catch(error){
-            showToast("Unable to connect to server","error");
+            showToast(error.response?.data?.detail||"Failed to change password","error");
         }
     };
 

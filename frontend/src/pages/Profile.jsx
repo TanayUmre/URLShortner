@@ -3,6 +3,7 @@ import { useToast } from "../components/ToastContext";
 import "../all.css";
 import {useEffect,useState} from "react";
 import {useNavigate} from "react-router-dom";
+import api from "../api";
 
 function Profile() {
     const[user,setUser]=useState(null);
@@ -13,36 +14,31 @@ function Profile() {
         localStorage.removeItem("access_token");
         showToast("Logged out successfully","success");
         navigate("/signin");
-    }
+    };
 
     useEffect(()=>{
         const token=localStorage.getItem("access_token");
         if(!token){
             showToast("You are not logged in. Please log in to view your profile.","error");
             navigate("/signin");
-            return
+            return;
         }
         const getprofile=async()=>{
             try{
-                const response=await fetch("http://localhost:8000/me",{
-                    method:"GET",
+                const response=await api.get("/me",{
                     headers:{
-                        "Authorization":`Bearer ${token}`,
+                        Authorization:`Bearer ${token}`,
                     },
                 });
-                const data=await response.json();
-                if(!response.ok){
-                    showToast(data.detail||"Failed to load profile","error");
-                    if(response.status===401){
-                        localStorage.removeItem("access_token");
-                        navigate("/signin");
-                    }
-                    return;
-                }
-                setUser(data);
+                setUser(response.data);
             }
             catch(error){
-                showToast("Unable to connect to server","error");
+                showToast(error.response?.data?.detail||"Failed to load profile","error");
+                if(error.response?.status===401)
+                {
+                    localStorage.removeItem("access_token");
+                    navigate("/signin");
+                }
             }
         };
         getprofile();

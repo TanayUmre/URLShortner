@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import PasswordInput from '../components/PasswordInput';
 import { useToast } from '../components/ToastContext';
 import '../all.css';
+import api from '../api';
 
 function SignIn(){
     const [email,setEmail]=useState("");
@@ -15,27 +16,17 @@ function SignIn(){
     const handleSubmit= async (e)=>{
         e.preventDefault();
         try{
-            const resp=await fetch("http://localhost:8000/login",{
-                method:"POST",
-                headers:{
-                    "Content-Type":"application/json",
-                },
-                body:JSON.stringify({
-                    email:email,
-                    password:password,
-                }),
+            const resp=await api.post("/login",{
+                email:email,
+                password:password,
             });
-            const data=await resp.json();
-            if(!resp.ok){
-                showToast(data.detail||"Invalid email or password","error");
-                return; 
-            }
+            const data=resp.data;
             localStorage.setItem("access_token",data.access_token);
             showToast("Login Successful","success");
             navigate("/profile");
         }
         catch(error){
-            showToast("Unable to connect to server","error");
+            showToast(error.response?.data?.detail||"Unable to connect to server","error");
         }
     };
 
