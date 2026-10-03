@@ -12,7 +12,8 @@ from fastapi.responses import RedirectResponse
 app=FastAPI()
 
 origin=[
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "https://urlshortener-frontend-1uyh.onrender.com"
 ]
 
 app.add_middleware(
